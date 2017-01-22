@@ -1,8 +1,11 @@
 (set-env!
+ :source-paths #{"src"}
+ :resource-paths #{"resources"}
  :dependencies
  '[[org.clojure/clojure "1.8.0" :scope "provided"]
-   [org.clojure/clojurescript "1.9.229" :scope "provided"]
-   [org.clojure/core.async "0.2.391"]
+   [org.clojure/clojurescript "1.9.293" :scope "provided"]
+
+   [deraen/boot-less "0.6.1" :scope "test"]
 
    [ajchemist/boot-figwheel "0.5.4-6" :scope "test"] ;; latest release
    [org.clojure/tools.nrepl "0.2.12" :scope "test"]
@@ -17,6 +20,8 @@
       :version "0.1.0-SNAPSHOT"
       :description "boot+figwheel example"})
 
+(require '[deraen.boot-less :refer [less]])
+
 (def all-builds
   [{:id "example"
     :source-paths ["src"]
@@ -30,18 +35,24 @@
   {:server-port 7000
    :server-logfile ".figwheel/server.log"
    :validate-config true
-   :css-dirs ["resources/public/css/"]})
+   :css-dirs ["target/public/css/"]})
 
 (deftask dev-figwheel []
   (merge-env! :source-paths #{"src"})
   (figwheel
    :build-ids ["example"]
    :all-builds all-builds
-   :target-path "resources/public"
+   :target-path "target/public"
    :figwheel-options figwheel-options))
+
+(deftask styles []
+  (comp
+   (watch)
+   (less)
+   (target :no-clean true)))
 
 (deftask dev []
   (comp
    (dev-figwheel)
    (repl :server true)
-   (wait)))
+   (styles)))
