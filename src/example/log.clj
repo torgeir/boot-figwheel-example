@@ -1,4 +1,4 @@
-(ns boot-figwheel.log)
+(ns example.log)
 
 (defmacro log [& args]
   `(.log js/console ~@args))

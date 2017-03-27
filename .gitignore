@@ -2,3 +2,4 @@
 .figwheel/server.log
 .nrepl-port
 /target/
+.idea

@@ -1,5 +1,5 @@
-(ns boot-figwheel.core
-  (:require-macros [boot-figwheel.log :refer [log]])
+(ns example.core
+  (:require-macros [example.log :refer [log]])
   (:require [clojure.string :as string]))
 
 (defn $ [sel]
@@ -9,6 +9,8 @@
   (aset el "innerHTML" str))
 
 (let [el ($ "code")]
-  (inner-html! el (+ (Math/random))))
+  (inner-html! el (+ 42 (Math/random))))
+
+(log "you're on!")
 
 (enable-console-print!)
