@@ -14,6 +14,7 @@
 (log "you're on!")
 
 (let [el ($ "#app")]
+  (set! (-> el .-innerHTML) "")
   (.appendChild el (text-node (random-number))))
 
 (enable-console-print!)

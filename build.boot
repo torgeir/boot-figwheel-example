@@ -31,21 +31,21 @@
       :description "boot+figwheel example"})
 
 (deftask dev-figwheel []
-  (merge-env! :source-paths #{"src"})
   (figwheel
    :build-ids ["example"]
    :target-path "target/public"
    :all-builds [{:id "example"
+                 :figwheel true
                  :source-paths ["src"]
                  :compiler {:main          'example.core
                             :output-to     "js/example.js"
                             :source-map    true
-                            :optimizations :none}
-                 :figwheel true}]
-   :figwheel-options {:validate-config true
-                      :server-port     7000
-                      :server-logfile  ".figwheel/server.log"
-                      :css-dirs        ["target/public/css/"]}))
+                            :optimizations :none}}]
+   :figwheel-options {:validate-config   true
+                      :server-port       7000
+                      :server-logfile    ".figwheel/server.log"
+                      :css-dirs          ["target/public/css/"]
+                      :open-file-command "emacsclient"}))
 
 (deftask build
   "Build for prod."
