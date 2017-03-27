@@ -39,7 +39,6 @@
   {:server-port 7000
    :server-logfile ".figwheel/server.log"
    :css-dirs ["target/public/css/"]
-   :repl true
    :validate-config true})
 
 (deftask dev-figwheel []
