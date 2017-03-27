@@ -28,3 +28,29 @@ number is logged when you run `boot dev`.)
 - at the prompt `boot.user>` type `(boot-figwheel/cljs-repl)`
 - type `(js/alert "woah!")` to watch an alert box pop open in the browser
 - woah!
+
+## useful boot tasks
+
+Build a single composed task, e.g. to build for prod
+
+```sh
+boot build
+```
+
+Show help for a task, e.g. the `target` task
+
+```sh
+boot target -h
+```
+
+Run a single task and pipe the resulting file set to `target/`
+
+```sh
+boot less -- target --no-clean
+```
+
+Build, serve the `target/public` folder, and keep the server up with the `wait` task
+
+```sh
+boot build -- serve -d target/public -- wait
+```
