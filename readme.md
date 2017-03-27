@@ -17,7 +17,7 @@ boot dev
 ## hot reload cljs and css
 
 - visit `http://localhost:3000`
-- change `core.cljs` to watch it the js reload!
+- change `core.cljs` to watch the js reload!
 - change `app.main.less` to watch the css reload!
 
 ## connect the cljs browser repl
