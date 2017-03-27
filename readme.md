@@ -31,10 +31,10 @@ number is logged when you run `boot dev`.)
 
 ## useful boot tasks
 
-Build a single composed task, e.g. to build for prod
+Build a single composed task, e.g. to build a jar file
 
 ```sh
-boot build
+boot dist
 ```
 
 Show help for a task, e.g. the `target` task

@@ -2,11 +2,16 @@
  :source-paths #{"src"}
  :resource-paths #{"resources"}
  :dependencies
- '[[org.clojure/clojure "1.9.0-alpha15" :scope "provided"]
-   [org.clojure/clojurescript "1.9.494" :scope "provided"]
+ '[[org.clojure/clojure "1.9.0-alpha15"]
+   [org.clojure/clojurescript "1.9.494"]
 
    [org.clojure/core.async "0.3.442"]
 
+   ;; backend
+   [http-kit "2.2.0"]
+   [compojure "1.5.2"]
+
+   ;; frontend
    [org.clojure/tools.nrepl "0.2.12"  :scope "test"] ; figwheel
    [com.cemerick/piggieback "0.2.1"   :scope "test"]
    [ajchemist/boot-figwheel "0.5.4-6" :scope "test"]
@@ -14,6 +19,7 @@
    [adzerk/boot-cljs "2.0.0"          :scope "test"] ; cljs
    [pandeiro/boot-http "0.7.2"        :scope "test"] ; serve
    [deraen/boot-less "0.6.1"          :scope "test"] ; less
+
    ])
 
 (swap! boot.repl/*default-middleware*
@@ -24,11 +30,6 @@
  '[pandeiro.boot-http :refer [serve]]
  '[adzerk.boot-cljs :refer [cljs]]
  '[deraen.boot-less :refer [less]])
-
-(task-options!
- pom {:project 'torgeir/boot-figwheel
-      :version "0.1.0-SNAPSHOT"
-      :description "boot+figwheel example"})
 
 (deftask dev-figwheel []
   (figwheel
@@ -47,20 +48,31 @@
                       :css-dirs          ["target/public/css/"]
                       :open-file-command "emacsclient"}))
 
-(deftask build
-  "Build for prod."
-  []
-  (comp
-   (cljs)
-   (less)
-   (target)))
-
 (deftask dev
   "Build for development: hot reloads cljs, serves static files, watches styles."
   []
   (comp
    (dev-figwheel)
-   (serve :dir "target/public")
+   (serve :dir "target/public" :port 8080)
    (watch)
    (less)
    (target :no-clean true)))
+
+(deftask dist
+  "Create a runnable jar.
+  Run it with `java -jar target/boot-figwheel-example-1.0.0.jar`."
+  []
+  (comp
+   (cljs)
+   (less)
+   (pom :project 'torgeir/boot-figwheel-example
+        :version "1.0.0"
+        :description "A boot+figwheel example"
+        :url "https://github.com/torgeir/boot-figwheel-example"
+        :scm {:url "https://github.com/torgeir/boot-figwheel-example"}
+        :license {"MIT License" "https://opensource.org/licenses/MIT"})
+   (aot :all true)
+   (uber)
+   (jar :main 'server.main)
+   (sift :include #{ #"^boot.*jar$" })
+   (target)))
