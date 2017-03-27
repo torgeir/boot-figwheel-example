@@ -5,12 +5,15 @@
 (defn $ [sel]
   (.querySelector js/document sel))
 
-(defn inner-html! [el str]
-  (aset el "innerHTML" str))
+(defn text-node [str]
+  (.createTextNode js/document str))
 
-(let [el ($ "code")]
-  (inner-html! el (+ 42 (Math/random))))
+(defn random-number []
+  (+ 42 (Math/random)))
 
 (log "you're on!")
+
+(let [el ($ "#app")]
+  (.appendChild el (text-node (random-number))))
 
 (enable-console-print!)
