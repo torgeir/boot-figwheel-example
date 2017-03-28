@@ -8,13 +8,16 @@
 (defn text-node [str]
   (.createTextNode js/document str))
 
-(defn random-number []
+(defonce random-number
   (+ 42 (Math/random)))
+
+(defn format-number [number]
+  (str "Number: " number))
 
 (log "you're on!")
 
 (let [el ($ "#app")]
   (set! (-> el .-innerHTML) "")
-  (.appendChild el (text-node (random-number))))
+  (.appendChild el (text-node (format-number random-number))))
 
 (enable-console-print!)
