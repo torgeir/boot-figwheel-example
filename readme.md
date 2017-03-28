@@ -4,7 +4,7 @@ A boot+figwheel example, that hot reloads cljs and less.
 
 ## prerequisits
 
-Install [`boot`]!(https://github.com/boot-clj/boot#install)
+Install [`boot`](https://github.com/boot-clj/boot#install)!
 
 ## run/watch
 
