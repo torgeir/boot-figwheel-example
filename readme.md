@@ -1,6 +1,6 @@
 # boot+figwheel example
 
-A boot+figwheel example, that hot reloads cljs and less.
+A boot+figwheel example, that hot reloads cljs and less. Client and server-side use of rum.
 
 ## prerequisits
 
