@@ -1,6 +1,5 @@
 (set-env!
  :source-paths #{"src"}
- :resource-paths #{"resources"}
  :dependencies '[[org.clojure/clojure "1.9.0-alpha15"]
                  [org.clojure/clojurescript "1.9.494"]
                  [org.clojure/core.async "0.3.442"]
@@ -17,7 +16,8 @@
                  [adzerk/boot-cljs "2.0.0"          :scope "test"] ; cljs
                  [pandeiro/boot-http "0.7.2"        :scope "test"] ; serve
                  [deraen/boot-less "0.6.1"          :scope "test"] ; less
-                 ])
+
+                 [rum "0.10.8"]])
 
 (load-file "file_utils.clj")
 
