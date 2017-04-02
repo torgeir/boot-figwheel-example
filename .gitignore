@@ -1,5 +1,5 @@
 /resources/public/dist/
-.figwheel/server.log
+.figwheel_server.log
 .nrepl-port
 /target/
 .idea

@@ -13,47 +13,41 @@
                  [com.cemerick/piggieback "0.2.1"   :scope "test"]
                  [ajchemist/boot-figwheel "0.5.4-6" :scope "test"]
                  [figwheel-sidecar "0.5.7"          :scope "test"]
-                 [adzerk/boot-cljs "2.0.0"          :scope "test"] ; cljs
-                 [pandeiro/boot-http "0.7.2"        :scope "test"] ; serve
                  [deraen/boot-less "0.6.1"          :scope "test"] ; less
 
                  [rum "0.10.8"]])
 
-(load-file "file_utils.clj")
+(load-file "figwheel_utils.clj")
 
 ;; fix figwheel browser repl for boot+cider repls in emacs
 (swap! boot.repl/*default-middleware*
        conj 'cemerick.piggieback/wrap-cljs-repl)
 
 (require '[boot-figwheel :refer [figwheel]]
-         '[pandeiro.boot-http :refer [serve]]
-         '[adzerk.boot-cljs :refer [cljs]]
          '[deraen.boot-less :refer [less]]
          '[server.app :as app])
 
-(defn- frontend []
-  "Frontend task to compile and hot reload cljs, as well as hot reload css.
+(def target-path
+  "Folder to build cljs and less to."
+  "target/public")
 
-   As figwheel compiles to a folder on disk (:target-path), this task copies the
-   initially compiled js files into `public/js/` on the classpath, so that the
-   compojure resources route for `public` can serve figwheel compiles js files,
-   along with the rest of the static files."
-  (comp
-   (figwheel
-    :target-path "target/public"
-    :all-builds [{:id "example"
-                  :figwheel true
-                  :source-paths ["src"]
-                  :compiler {:main          'example.core
-                             :output-to     "js/example.js"
-                             :source-map    true
-                             :optimizations :none}}]
-    :figwheel-options {:validate-config   true
-                       :server-port       7000
-                       :server-logfile    ".figwheel/server.log"
-                       :css-dirs          ["target/public/css/"]
-                       :open-file-command "emacsclient"})
-   (file-utils/copy-dir-to-classpath "./target/public/js" "public/js")))
+(def builds
+  "List of prod cljs-to-js builds."
+  [{:id "example"
+    :source-paths ["src"]
+    :compiler {:main 'example.core
+               :output-to "js/example.js"
+               :optimizations :advanced}}])
+
+(defn dev-builds
+  "Transform list of builds to add figwheel-js for hot reloading, source maps
+   and no google closure compiler optimizations."
+  [builds]
+  (doall (map #(-> %
+                   (assoc-in [:figwheel] true)
+                   (assoc-in [:compiler :source-map] true)
+                   (assoc-in [:compiler :optimizations] :none))
+              builds)))
 
 (deftask dev
   "Build for development.
@@ -64,18 +58,27 @@
   []
   (comp
    (do (app/start-server) identity)
-   (frontend)
+   (figwheel-utils/copying-built-js-to-class-path
+    (figwheel :target-path target-path
+              :all-builds (dev-builds builds)
+              :figwheel-options {:server-port 7000
+                                 :validate-config true
+                                 :css-dirs [(format "%s/css/" target-path)]
+                                 :open-file-command "emacsclient"}))
    (repl :server true)
    (watch)
-   (less)
+   (less :source-map true)
    (target :no-clean true)))
 
 (deftask dist
-  "Create a runnable jar.
-   Run it with `java -jar target/<jar-file>`."
+  "Create a runnable jar. Run it with `java -jar target/<jar-file>`."
   []
   (comp
-   (cljs)
+   (figwheel-utils/copying-built-js-to-class-path
+    (figwheel :target-path target-path
+              :all-builds builds
+              :once-ids (map :id builds)
+              :figwheel-options {:server-port 7001}))
    (less :compression true)
    (pom :project 'torgeir/boot-figwheel-example
         :version "1.0.0"

@@ -1,5 +1,0 @@
-{:require [example.core]
- :compiler-options {:output-to "js/example.js"
-                    :output-dir "target/public"
-                    :output-wrapper true
-                    :optimizations :advanced}}
