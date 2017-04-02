@@ -2,13 +2,23 @@
   (:require [compojure.core :refer :all]
             [compojure.route :as route]))
 
-(def index-html (slurp (clojure.java.io/resource "public/index.html")))
-
 (defn index [req]
   {:status  200
    :headers {"content-type" "text/html"}
-   :body index-html})
+   :body (str
+          "<!doctype html>
+           <html>
+             <head>
+               <title>boot + figwheel example</title>
+               <link rel='stylesheet' href='css/app.css'>
+             </head>
+             <body>
+               <div id='app'></div>
+               <script src='js/example.js'></script>
+             </body>
+           </html> ")})
+
 
 (defroutes app
-  (GET "/" [] #'index)
-  (route/resources "/" {:root "public"}))
+  (route/resources "/" {:root "public"})
+  (GET "/" [] #'index))
